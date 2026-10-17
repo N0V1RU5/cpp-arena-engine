@@ -30,5 +30,49 @@ To fix the O(N^2) distance calculation nightmare, I implemented a simple 2D Grid
 *   **RNG Mechanics:** Combat includes Critical Hits and Dodges using the standard AAA `<random>` library (Mersenne Twister), completely avoiding the outdated `rand()`.
 *   **Profiling:** Built-in `<chrono>` timers to measure the execution time of a single frame (turn).
 
+## Performance Benchmarks & Stress Testing
+
+To see how far this Data-Oriented structure could be pushed, I ran two benchmarks on a single CPU thread. The results highlight the efficiency of Spatial Partitioning (Grid) combined with Swap & Pop memory management.
+
+### Benchmark 1: The Standard Scale (10,000 vs 10,000 Units)
+With 20,000 entities on a 1000x1000 grid, the engine comfortably processes the heaviest combat round in `~20 ms` (maintaining ~50 FPS backend logic). As entities die and are cleared from the CPU Cache by the Garbage Collector, processing time drops to just `1 ms`.
+
+```text
+--- ROUND 1 ---
+Round 1 was 0.8915 ms.
+--- ROUND 2 ---
+Round 2 was 20.5292 ms.
+--- ROUND 3 ---
+Round 3 was 11.5141 ms.
+--- ROUND 4 ---
+Round 4 was 7.1613 ms.
+--- ROUND 5 ---
+Round 5 was 4.2442 ms.
+...
+--- ROUND 10 ---
+Round 10 was 1.0401 ms.
+TEAM ONE WON!!! 2436 : 704
+```
+
+### Benchmark 2: The Absolute Limit (1,000,000 vs 1,000,000 Units)
+Just to see if the engine would crash due to memory limits, I spawned 2 MILLION entities. The engine successfully allocated the memory and processed the logic without crashing. The first heavy combat round took about 136 seconds, dropping exponentially as the Grid and Swap & Pop algorithms optimized the shrinking arrays.
+
+```text
+--- ROUND 1 ---
+Round 1 was 70.3555 ms.
+--- ROUND 2 ---
+Round 2 was 136697 ms.
+--- ROUND 3 ---
+Round 3 was 50362.8 ms.
+--- ROUND 4 ---
+Round 4 was 19624.5 ms.
+--- ROUND 5 ---
+Round 5 was 8421.03 ms.
+...
+--- ROUND 10 ---
+Round 10 was 751.279 ms.
+TEAM TWO WON!!! 210728 : 798
+```
+
 ## Future Plans?
 Right now, this was purely a backend architectural exercise to understand how memory and cache optimization works in game development. It served its purpose perfectly. In the future, I might hook this backend up to a simple graphical interface (like Raylib or OpenGL) just to watch the 20,000 pixels actually beat each other up.
