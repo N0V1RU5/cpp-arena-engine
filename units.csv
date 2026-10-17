@@ -1,5 +1,5 @@
 Name,Healthpoints,Speed,Damage,CritChance,DodgeChance,AttackRange
-Archer,80,40,25,30,25,200
-Goblin,100,60,8,10,60,50
+Archer,80,40,16,30,20,100
+Goblin,100,65,10,10,50,50
 
 Orc,300,25,40,40,0,60
